@@ -20,7 +20,11 @@ steps:
     npm run build
   displayName: 'npm install and build'
   
+- script: npx mocha
+  displayName: 'npm install mocha'
+  
 - script: mocha test --reporter mocha-junit-reporter
+  displayName: 'mocha test'
 
 - task: PublishTestResults@2
   condition: succeededOrFailed()
