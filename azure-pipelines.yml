@@ -7,33 +7,39 @@ trigger:
 - master
 
 pool:
-  vmImage: 'ubuntu-16.04'
-
+  vmImage: 'Ubuntu 16.04'
+  
 steps:
-- task: NodeTool@0 
+- task: NodeTool@0
   inputs:
     versionSpec: '8.x'
-  displayName: 'Install Node.js'
+  
+- task: Npm@1
+  displayName: 'npm install'
+  inputs:
+    command: install
 
-- script: |
-    npm install
-    npm run build
-  displayName: 'npm install and build'
-  
-- script: npx mocha
-  displayName: 'npm install mocha'
-  
-- script: mocha test --reporter mocha-junit-reporter
-  displayName: 'mocha test'
+- task: Npm@1
+  displayName: 'npm test'
+  inputs:
+    command: custom
+    customCommand: 'test'
 
 - task: PublishTestResults@2
-  condition: succeededOrFailed()
   inputs:
-    testRunner: JUnit
     testResultsFiles: '**/TEST-RESULTS.xml'
-    
+    testRunTitle: 'Test results for JavaScript'
+  condition: succeededOrFailed()
+
 - task: PublishCodeCoverageResults@1
   inputs: 
     codeCoverageTool: Cobertura
     summaryFileLocation: '$(System.DefaultWorkingDirectory)/**/*coverage.xml'
     reportDirectory: '$(System.DefaultWorkingDirectory)/**/coverage'
+    
+- task: ArchiveFiles@2
+  inputs:
+    rootFolderOrFile: '$(System.DefaultWorkingDirectory)'
+    includeRootFolder: false
+
+- task: PublishBuildArtifacts@1
