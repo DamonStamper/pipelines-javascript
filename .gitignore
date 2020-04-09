@@ -29,3 +29,8 @@ node_modules
 /package-lock.json
 
 TEST-RESULTS.xml
+
+.terraform.tfstate.lock.info
+.terraform
+*.tfstate
+*.tfstate.backup
